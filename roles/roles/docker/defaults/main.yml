@@ -1,0 +1,21 @@
+---
+docker_uninstall_packages:
+  - docker
+  - docker-engine
+  - docker.io
+  - containerd
+  - runc
+
+docker_repository_over_https_packages:
+  - ca-certificates
+  - gnupg
+  - lsb-release
+
+docker_gpg_key_url: "https://download.docker.com/linux/ubuntu/gpg"
+docker_gpg_keyring_file_location: /etc/apt/keyrings/docker.asc
+docker_repository: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+
+docker_install_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io

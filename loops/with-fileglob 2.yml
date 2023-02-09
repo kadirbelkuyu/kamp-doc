@@ -1,0 +1,10 @@
+---
+- name: Example use of with_file_glob
+  hosts: all
+  become: true
+  tasks:
+    - name: Specifying a destination path
+      fetch:
+        src: "{{ item }}"
+        dest: ./remote-logs
+      with_fileglob: '/var/log/*.log'

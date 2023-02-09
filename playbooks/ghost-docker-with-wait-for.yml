@@ -1,0 +1,46 @@
+---
+- name: Install ghost as a docker container
+  hosts: all
+  become: True
+  tasks:
+  - name: Install virtualenv package
+    apt:
+      name: virtualenv
+      update_cache: True
+    become: True
+
+  - name: Install docker into the specified (virtualenv)
+    pip:
+      name: docker
+      virtualenv: ~/.venv/myvenv
+
+  - name: Set python interpreter
+    set_fact:
+      ansible_python_interpreter: ~/.venv/myvenv/bin/python3
+
+  - name: Run ghost as a Docker container
+    docker_container:
+      name: ghost
+      image: ghost:5.33.2-alpine
+      env:
+        NODE_ENV: development
+        url: "http://localhost:8080"
+      ports:
+      - "8080:2368"
+
+  - name: Wait for port 8080 to become open on the host, don't start checking for 10 seconds
+    wait_for:
+      host: "{{ ansible_host }}"
+      port: 8080
+      delay: 10
+      timeout: 30
+    delegate_to: 127.0.0.1
+    run_once: True
+
+  - name: Download index.html for ghost instance for a single host
+    get_url:
+      url: "http://{{ ansible_host }}:8080"
+      dest: index.html
+    delegate_to: 127.0.0.1
+    run_once: True
+

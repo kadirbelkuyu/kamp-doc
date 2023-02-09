@@ -1,0 +1,14 @@
+---
+- name: Install virtualenv and a pip package
+  hosts: all
+  tasks:
+  - name: Install virtualenv package
+    apt:
+      name: virtualenv
+      update_cache: True
+    become: True
+
+  - name: Install requests into the specified (virtualenv)
+    pip:
+      name: requests==2.28.2
+      virtualenv: ~/.venv/myvenv

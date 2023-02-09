@@ -1,0 +1,23 @@
+---
+- name: Example use of loop
+  hosts: all
+  become: true
+  tasks:
+    - name: Add several users
+      ansible.builtin.user:
+        name: "{{ item }}"
+        groups: "sudo"
+        state: present
+      loop:
+        - testuser1
+        - testuser2
+
+    - name: More complex items to add several users
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        groups: "{{ item.groups }}"
+        state: present
+      loop:
+        - { name: testuser3, uid: 1102, groups: "sudo, vagrant" }
+        - { name: testuser4, uid: 1103, groups: staff }

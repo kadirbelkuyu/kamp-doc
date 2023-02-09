@@ -1,0 +1,27 @@
+---
+- name: Install and configure nginx
+  hosts: all
+  become: True
+  vars:
+    domain_name: example.com
+
+  tasks:
+  - name: Install nginx package
+    apt:
+      name: nginx
+      update_cache: True
+
+  - name: Update nginx configuration
+    template:
+      src: example.com.j2
+      dest: /etc/nginx/conf.d/example.com.conf
+      owner: root
+      group: root
+      mode: '0644'
+    notify: Reload nginx
+
+  handlers:
+  - name: Reload nginx
+    service:
+      name: nginx
+      state: reloaded

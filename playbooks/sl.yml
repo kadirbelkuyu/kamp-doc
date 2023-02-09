@@ -1,0 +1,17 @@
+---
+- name: Install sl
+  hosts: all
+  gather_facts: False
+  become: True
+  tasks:
+    - name: Install sl package
+      apt:
+        name: sl
+        update_cache: True
+        cache_valid_time: 600
+
+      register: result
+
+    - name: Display restart time
+      debug:
+        var: result.cache_updated

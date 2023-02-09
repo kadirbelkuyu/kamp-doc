@@ -1,0 +1,14 @@
+---
+- name: Update /etc/hosts file
+  connection: local
+  hosts: localhost
+  become: true
+  tasks:
+  - name: Add example.com to the /etc/hosts file
+    ansible.builtin.lineinfile:
+      path: /etc/hosts
+      regexp: '^192\.169\.56\.20'
+      line: 192.168.56.20 example.com
+      owner: root
+      group: root
+      mode: '0644'

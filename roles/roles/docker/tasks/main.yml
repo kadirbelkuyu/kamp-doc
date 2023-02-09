@@ -1,0 +1,36 @@
+---
+- name: Uninstall old versions
+  ansible.builtin.apt:
+    package: "{{ docker_uninstall_packages }}"
+    state: absent
+
+- name: Install packages to allow apt to use a repository over HTTPS
+  ansible.builtin.apt:
+    name: "{{ docker_repository_over_https_packages }}"
+    state: present
+    update_cache: true
+
+- name: Create the keyring directory for apt
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+
+- name: Add Docker’s official GPG key
+  ansible.builtin.get_url:
+    url: "{{ docker_gpg_key_url }}"
+    dest: "{{ docker_gpg_keyring_file_location }}"
+    mode: "0644"
+
+- name: Set up the repository
+  ansible.builtin.apt_repository:
+    repo: "{{ docker_repository }}"
+    state: present
+    update_cache: true
+    mode: "0644"
+
+- name: Install Docker Engine, and containerd
+  ansible.builtin.apt:
+    name: "{{ docker_install_packages }}"
+    state: present
+    update_cache: true
+  notify: Restart docker service

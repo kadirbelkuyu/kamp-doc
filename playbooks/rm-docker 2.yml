@@ -1,0 +1,23 @@
+- name: Remove Docker
+  hosts: host0
+  become: True
+  tasks:
+    - name: Stop Docker daemon
+      service:
+        name: docker
+        state: stopped
+
+    - name: Uninstall Docker package
+      apt:
+        name: docker.io
+        state: absent
+
+    - name: Remove Docker configuration files
+      file:
+        path: /etc/docker
+        state: absent
+
+    - name: Remove Docker data directories
+      file:
+        path: /var/lib/docker
+        state: absent

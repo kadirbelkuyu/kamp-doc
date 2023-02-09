@@ -1,0 +1,16 @@
+---
+- name: Example use of with_dict
+  hosts: all
+  become: true
+  vars:
+    mydict:
+      key1: val1
+      key2: val2
+      key3:
+        - val3-1
+        - val3-2
+  tasks:
+    - name: with_dict -> loop (option 1)
+      debug:
+        msg: "{{ item.key }} - {{ item.value }}"
+      loop: "{{ mydict|dict2items }}"

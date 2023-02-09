@@ -1,0 +1,54 @@
+- name: Check Docker prerequisites
+  hosts: host0
+  become: True
+  tasks:
+    - name: Check operating system version
+      command: lsb_release -a
+      register: lsb_release
+
+    - name: Assert Ubuntu version
+      fail:
+        msg: "This playbook is designed for Ubuntu systems only."
+      when: "'Ubuntu' not in lsb_release.stdout"
+
+    - name: Check minimum memory requirement
+      command: grep MemTotal /proc/meminfo
+      register: meminfo
+
+    # - name: Assert minimum memory
+    #   fail:
+    #     msg: "This playbook requires at least 1GB of memory."
+    #   when: meminfo.stdout is defined and meminfo.stdout|int < 1024
+
+- name: Install Docker
+  hosts: host0
+  become: True
+  tasks:
+    - name: Update package index
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install Docker package
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Start Docker daemon
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+- name: Test Docker installation
+  hosts: host0
+  become: True
+  tasks:
+    - name: Test Docker command line tool
+      shell: docker info
+      register: docker_info
+      ignore_errors: yes
+
+    - name: Display Docker information
+      debug:
+        var: docker_info.stdout_lines
